@@ -163,8 +163,11 @@
   new Vue({
     el: '#app',
     data: {
-      hours: JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
-      archive: JSON.parse(localStorage.getItem('archive')) || [],
+      // hours: JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
+      // archive: JSON.parse(localStorage.getItem('archive')) || [],
+      loading: true,  // Add a loading state
+      hours: Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
+      archive: [],
       selectedHours: [],
       selectedActivity: null,
       newActivityName: '',
@@ -240,12 +243,57 @@
         const period = index < 12 ? 'AM' : 'PM';
         return `${hour} ${period}`;
       },
+      // saveData() {
+      //   localStorage.setItem('hours', JSON.stringify(this.hours));
+      //   localStorage.setItem('archive', JSON.stringify(this.archive));
+      //   localStorage.setItem('predefinedActivities', JSON.stringify(this.predefinedActivities));
+      // }
       saveData() {
-        localStorage.setItem('hours', JSON.stringify(this.hours));
-        localStorage.setItem('archive', JSON.stringify(this.archive));
-        localStorage.setItem('predefinedActivities', JSON.stringify(this.predefinedActivities));
+        console.log('Saving data to Netlify function...');
+        fetch('/api/saveActivity', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            hours: this.hours,
+            archive: this.archive,
+            predefinedActivities: this.predefinedActivities
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Data saved successfully:', data.message);
+        })
+        .catch(err => {
+          console.error('Error saving data:', err);
+        });
+      },
+      loadData() {
+        console.log('Loading data from Netlify function...');
+        fetch('/api/saveActivity')
+          .then(response => response.json())
+          .then(data => {
+            console.log('Data loaded:', data);
+            if (data.hours) {
+              this.hours = data.hours.map(hour => ({ activity: hour.activity, color: hour.color }));
+            }
+            if (data.archive) {
+              this.archive = data.archive;
+            }
+            if (data.predefinedActivities) {
+              this.predefinedActivities = data.predefinedActivities;
+            }
+            this.loading = false; // Set loading to false when done
+          })
+          .catch(err => {
+            console.error('Error loading data:', err);
+            this.loading = false; // Set loading to false even on error
+          });
       }
+    },
+    created() {
+      this.loadData(); // Load data when the app starts
     }
+    
   });
 </script>
 
