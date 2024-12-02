@@ -236,12 +236,41 @@
           const period = index < 12 ? 'AM' : 'PM';
           return `${hour} ${period}`;
         },
+        // saveData() {
+        //   localStorage.setItem('hours', JSON.stringify(this.hours));
+        //   localStorage.setItem('archive', JSON.stringify(this.archive));
+        //   localStorage.setItem('predefinedActivities', JSON.stringify(this.predefinedActivities));
+        // }
         saveData() {
-          localStorage.setItem('hours', JSON.stringify(this.hours));
-          localStorage.setItem('archive', JSON.stringify(this.archive));
-          localStorage.setItem('predefinedActivities', JSON.stringify(this.predefinedActivities));
+            axios.post('/.netlify/functions/saveData', {
+            hours: this.hours,
+            archive: this.archive,
+            predefinedActivities: this.predefinedActivities
+          }).then(() => {
+            console.log('Data saved successfully!');
+          }).catch(err => {
+            console.error('Error saving data:', err);
+    });
+  },
+        loadData() {
+            axios.get('/.netlify/functions/getData')
+              .then(response => {
+                 const data = response.data;
+               if (data) {
+                this.hours = data.hours || this.hours;
+                this.archive = data.archive || this.archive;
+                this.predefinedActivities = data.predefinedActivities || this.predefinedActivities;
         }
-      }
+      })
+      .catch(err => {
+        console.error('Error loading data:', err);
+      });
+
+      },
+      created() {
+        this.loadData();
+    }
+  }
     });
   </script>
 </body>
