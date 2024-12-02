@@ -160,22 +160,30 @@
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
     import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
-  
+
     // Your web app's Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBeQ1pYcJ0YMEzx9Rb-00Vz1_FW0D06s1I",
       authDomain: "time-box-b7f79.firebaseapp.com",
       projectId: "time-box-b7f79",
-      storageBucket: "time-box-b7f79.firebasestorage.app",
+      storageBucket: "time-box-b7f79.appspot.com",
       messagingSenderId: "97463684641",
       appId: "1:97463684641:web:5d99a4257a53776cbf9d60"
     };
-  
+
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
+
+    window.app = {
+      firebase: {
+        database: database,
+        ref: ref,
+        set: set,
+        get: get,
+        child: child
+      }
+    };
   </script>
 
   <script>
@@ -267,38 +275,38 @@
         //   localStorage.setItem('predefinedActivities', JSON.stringify(this.predefinedActivities));
         // }
         saveData() {
-        console.log('Saving data to Firebase...');
-        const dbRef = ref(database, 'timeBoxApp/userData');
-        set(dbRef, {
-          hours: this.hours,
-          archive: this.archive,
-          predefinedActivities: this.predefinedActivities
-        })
-        .then(() => {
-          console.log('Data saved successfully to Firebase!');
-        })
-        .catch((err) => {
-          console.error('Error saving data:', err);
-        });
-      },
-      loadData() {
-        console.log('Loading data from Firebase...');
-        const dbRef = ref(database);
-        get(child(dbRef, 'timeBoxApp/userData'))
-          .then(snapshot => {
-            if (snapshot.exists()) {
-              const data = snapshot.val();
-              console.log('Data loaded:', data);
-              this.hours = data.hours || this.hours;
-              this.archive = data.archive || this.archive;
-              this.predefinedActivities = data.predefinedActivities || this.predefinedActivities;
-            } else {
-              console.log('No data found in Firebase');
-            }
+          console.log('Saving data to Firebase...');
+          const dbRef = window.app.firebase.ref(window.app.firebase.database, 'timeBoxApp/userData');
+          window.app.firebase.set(dbRef, {
+            hours: this.hours,
+            archive: this.archive,
+            predefinedActivities: this.predefinedActivities
+          })
+          .then(() => {
+            console.log('Data saved successfully to Firebase!');
           })
           .catch((err) => {
-            console.error('Error loading data:', err);
+            console.error('Error saving data:', err);
           });
+        },
+        loadData() {
+          console.log('Loading data from Firebase...');
+          const dbRef = window.app.firebase.ref(window.app.firebase.database);
+          window.app.firebase.get(window.app.firebase.child(dbRef, 'timeBoxApp/userData'))
+            .then(snapshot => {
+              if (snapshot.exists()) {
+                const data = snapshot.val();
+                console.log('Data loaded:', data);
+                this.hours = data.hours || this.hours;
+                this.archive = data.archive || this.archive;
+                this.predefinedActivities = data.predefinedActivities || this.predefinedActivities;
+              } else {
+                console.log('No data found in Firebase');
+              }
+            })
+            .catch((err) => {
+              console.error('Error loading data:', err);
+            });
         }
       },
       created() {
