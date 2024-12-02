@@ -157,44 +157,14 @@
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-  <script type="module">
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
-
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyBeQ1pYcJ0YMEzx9Rb-00Vz1_FW0D06s1I",
-      authDomain: "time-box-b7f79.firebaseapp.com",
-      databaseURL: "https://time-box-b7f79-default-rtdb.firebaseio.com/",
-      projectId: "time-box-b7f79",
-      storageBucket: "time-box-b7f79.appspot.com",
-      messagingSenderId: "97463684641",
-      appId: "1:97463684641:web:5d99a4257a53776cbf9d60"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-
-    window.app = {
-      firebase: {
-        database: database,
-        ref: ref,
-        set: set,
-        get: get,
-        child: child
-      }
-    };
-  </script>
+  
 
 <script>
   new Vue({
     el: '#app',
     data: {
-      loading: true,  // Add a loading state
-      hours: Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })), // Initial default values
-      archive: [],
+      hours: JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
+      archive: JSON.parse(localStorage.getItem('archive')) || [],
       selectedHours: [],
       selectedActivity: null,
       newActivityName: '',
@@ -228,10 +198,8 @@
       applyActivity() {
         if (this.selectedActivity && this.selectedActivity !== 'add-new') {
           this.selectedHours.forEach(index => {
-            Vue.set(this.hours, index, {
-              activity: this.selectedActivity.name,
-              color: this.selectedActivity.color
-            });
+            this.hours[index].activity = this.selectedActivity.name;
+            this.hours[index].color = this.selectedActivity.color;
           });
         }
         this.selectedHours = [];
@@ -273,54 +241,10 @@
         return `${hour} ${period}`;
       },
       saveData() {
-        console.log('Saving data to Firebase...');
-        const dbRef = window.app.firebase.ref(window.app.firebase.database, 'timeBoxApp/userData');
-        window.app.firebase.set(dbRef, {
-          hours: this.hours,
-          archive: this.archive,
-          predefinedActivities: this.predefinedActivities
-        })
-        .then(() => {
-          console.log('Data saved successfully to Firebase!');
-        })
-        .catch((err) => {
-          console.error('Error saving data:', err);
-        });
-      },
-      loadData() {
-        console.log('Loading data from Firebase...');
-        const dbRef = window.app.firebase.ref(window.app.firebase.database);
-        window.app.firebase.get(window.app.firebase.child(dbRef, 'timeBoxApp/userData'))
-          .then(snapshot => {
-            if (snapshot.exists()) {
-              const data = snapshot.val();
-              console.log('Data loaded:', data);
-              
-              // Load data into Vue instance
-              if (data.hours) {
-                this.hours = data.hours.map(hour => ({ activity: hour.activity, color: hour.color }));
-              }
-              if (data.archive) {
-                this.archive = data.archive;
-              }
-              if (data.predefinedActivities) {
-                this.predefinedActivities = data.predefinedActivities;
-              }
-
-              this.loading = false;  // Set loading to false when done
-            } else {
-              console.log('No data found in Firebase');
-              this.loading = false;  // Set loading to false even if no data is found
-            }
-          })
-          .catch((err) => {
-            console.error('Error loading data:', err);
-            this.loading = false;  // Set loading to false even on error
-          });
+        localStorage.setItem('hours', JSON.stringify(this.hours));
+        localStorage.setItem('archive', JSON.stringify(this.archive));
+        localStorage.setItem('predefinedActivities', JSON.stringify(this.predefinedActivities));
       }
-    },
-    created() {
-      this.loadData(); // Load data when the app starts
     }
   });
 </script>
