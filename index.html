@@ -192,10 +192,10 @@
     new Vue({
       el: '#app',
       data: {
-        // hours: JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
-        hours: Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
-        // archive: JSON.parse(localStorage.getItem('archive')) || [],
-        archive: [],
+        hours: JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
+        // hours: Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
+        archive: JSON.parse(localStorage.getItem('archive')) || [],
+        // archive: [],
         selectedHours: [],
         selectedActivity: null,
         newActivityName: '',
