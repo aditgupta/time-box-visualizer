@@ -290,26 +290,87 @@
             console.error('Error saving data:', err);
           });
         },
-        loadData() {
-          console.log('Loading data from Firebase...');
-          const dbRef = window.app.firebase.ref(window.app.firebase.database);
-          window.app.firebase.get(window.app.firebase.child(dbRef, 'timeBoxApp/userData'))
-            .then(snapshot => {
-              if (snapshot.exists()) {
-                const data = snapshot.val();
-                console.log('Data loaded:', data);
-                this.hours = data.hours || this.hours;
-                this.archive = data.archive || this.archive;
-                this.predefinedActivities = data.predefinedActivities || this.predefinedActivities;
-              } else {
-                console.log('No data found in Firebase');
-              }
-            })
-            .catch((err) => {
-              console.error('Error loading data:', err);
-            });
-        }
-      },
+      //   loadData() {
+      //     console.log('Loading data from Firebase...');
+      //     const dbRef = window.app.firebase.ref(window.app.firebase.database);
+      //     window.app.firebase.get(window.app.firebase.child(dbRef, 'timeBoxApp/userData'))
+      //       .then(snapshot => {
+      //         if (snapshot.exists()) {
+      //           const data = snapshot.val();
+      //           console.log('Data loaded:', data);
+      //           this.hours = data.hours || this.hours;
+      //           this.archive = data.archive || this.archive;
+      //           this.predefinedActivities = data.predefinedActivities || this.predefinedActivities;
+      //         } else {
+      //           console.log('No data found in Firebase');
+      //         }
+      //       })
+      //       .catch((err) => {
+      //         console.error('Error loading data:', err);
+      //       });
+      //   }
+      // },
+      loadData() {
+        console.log('Loading data from Firebase...');
+        const dbRef = window.app.firebase.ref(window.app.firebase.database);
+        window.app.firebase.get(window.app.firebase.child(dbRef, 'timeBoxApp/userData'))
+          .then(snapshot => {
+            if (snapshot.exists()) {
+              const data = snapshot.val();
+              console.log('Data loaded:', data);
+              this.hours = data.hours || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
+              this.archive = data.archive || [];
+              this.predefinedActivities = data.predefinedActivities || [
+                { name: 'Sleep', color: '#EBEAFF' },
+                { name: 'Office', color: '#C2FFC7' },
+                { name: 'Reading', color: '#FAB12F' },
+                { name: 'Math', color: '#FFE6A9' },
+                { name: 'Philosophy', color: '#D8DBBD' },
+                { name: 'Writing', color: '#FAF6E3' },
+                { name: 'Family time', color: '#FFE3E3' },
+                { name: 'Entertainment', color: '#10375C' },
+                { name: 'Walk', color: '#FFD35A' },
+                { name: 'Exercise', color: '#36BA98' }
+              ];
+            } else {
+              console.log('No data found in Firebase');
+              // Initialize default values if no data found
+              this.hours = Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
+              this.archive = [];
+              this.predefinedActivities = [
+                { name: 'Sleep', color: '#EBEAFF' },
+                { name: 'Office', color: '#C2FFC7' },
+                { name: 'Reading', color: '#FAB12F' },
+                { name: 'Math', color: '#FFE6A9' },
+                { name: 'Philosophy', color: '#D8DBBD' },
+                { name: 'Writing', color: '#FAF6E3' },
+                { name: 'Family time', color: '#FFE3E3' },
+                { name: 'Entertainment', color: '#10375C' },
+                { name: 'Walk', color: '#FFD35A' },
+                { name: 'Exercise', color: '#36BA98' }
+              ];
+            }
+          })
+          .catch((err) => {
+            console.error('Error loading data:', err);
+            // Initialize default values in case of error
+            this.hours = Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
+            this.archive = [];
+            this.predefinedActivities = [
+              { name: 'Sleep', color: '#EBEAFF' },
+              { name: 'Office', color: '#C2FFC7' },
+              { name: 'Reading', color: '#FAB12F' },
+              { name: 'Math', color: '#FFE6A9' },
+              { name: 'Philosophy', color: '#D8DBBD' },
+              { name: 'Writing', color: '#FAF6E3' },
+              { name: 'Family time', color: '#FFE3E3' },
+              { name: 'Entertainment', color: '#10375C' },
+              { name: 'Walk', color: '#FFD35A' },
+              { name: 'Exercise', color: '#36BA98' }
+            ];
+          });
+      }
+    },
       created() {
         this.loadData(); // Load data when the app starts
       }  
