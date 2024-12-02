@@ -277,6 +277,8 @@
         // }
         saveData() {
           console.log('Saving data to Firebase...');
+          console.log('Current hours data:', this.hours);  // Debugging log
+          console.log('Current archive data:', this.archive);  // Debugging log
           const dbRef = window.app.firebase.ref(window.app.firebase.database, 'timeBoxApp/userData');
           window.app.firebase.set(dbRef, {
             hours: this.hours,
