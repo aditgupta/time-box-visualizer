@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 exports.handler = async (event, context) => {
-  const dataPath = path.join(__dirname, 'data.json');
+  // Use the same temporary file location
+  const dataPath = path.resolve('/tmp', 'data.json');
 
   if (event.httpMethod !== 'GET') {
     return {
@@ -12,15 +13,29 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const data = fs.existsSync(dataPath) ? fs.readFileSync(dataPath, 'utf8') : '{}';
-    return {
-      statusCode: 200,
-      body: data
-    };
+    // Check if the file exists
+    if (fs.existsSync(dataPath)) {
+      const data = fs.readFileSync(dataPath, 'utf8');
+      console.log('Retrieved data:', data); // Debugging log
+
+      return {
+        statusCode: 200,
+        body: data
+      };
+    } else {
+      console.log('No data found at', dataPath); // Debugging log
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ message: 'No data available' })
+      };
+    }
   } catch (error) {
+    console.error('Error retrieving data:', error); // Debugging log
     return {
       statusCode: 500,
-      body: 'Internal Server Error: ' + error.message
+      body: JSON.stringify({ error: error.message })
     };
   }
 };
+
+

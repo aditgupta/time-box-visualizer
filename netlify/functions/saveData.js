@@ -2,8 +2,9 @@ const fs = require('fs');
 const path = require('path');
 
 exports.handler = async (event, context) => {
-  const dataPath = path.join(__dirname, 'data.json');
-  
+  // Define a temporary file location (in serverless environments, persistence may not exist)
+  const dataPath = path.resolve('/tmp', 'data.json');
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
@@ -13,15 +14,21 @@ exports.handler = async (event, context) => {
 
   try {
     const body = JSON.parse(event.body);
+    console.log('Saving data:', body); // Debugging log
+
+    // Write data to file
     fs.writeFileSync(dataPath, JSON.stringify(body), 'utf8');
+
     return {
       statusCode: 200,
-      body: 'Data saved successfully!'
+      body: JSON.stringify({ message: 'Data saved successfully!' })
     };
   } catch (error) {
+    console.error('Error saving data:', error); // Debugging log
     return {
       statusCode: 500,
-      body: 'Internal Server Error: ' + error.message
+      body: JSON.stringify({ error: error.message })
     };
   }
 };
+
