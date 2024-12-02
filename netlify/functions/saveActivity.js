@@ -10,6 +10,14 @@ exports.handler = async function(event, context) {
       console.log("Incoming POST request...");
       const incomingData = JSON.parse(event.body);
 
+      // Check if file exists, if not create it with default structure
+      try {
+        await fs.access(dataPath);
+      } catch (err) {
+        // File does not exist, create it
+        await fs.writeFile(dataPath, JSON.stringify({ activities: [], archive: [] }, null, 2));
+      }
+
       // Write the incoming data to the JSON file
       await fs.writeFile(dataPath, JSON.stringify(incomingData, null, 2));
       console.log("Data saved successfully!");
@@ -29,6 +37,14 @@ exports.handler = async function(event, context) {
   } else if (event.httpMethod === 'GET') {
     try {
       console.log("Incoming GET request...");
+
+      // Check if file exists, if not create it with default structure
+      try {
+        await fs.access(dataPath);
+      } catch (err) {
+        // File does not exist, create it
+        await fs.writeFile(dataPath, JSON.stringify({ activities: [], archive: [] }, null, 2));
+      }
 
       // Read the existing data from the JSON file
       const data = await fs.readFile(dataPath, 'utf8');
@@ -54,4 +70,3 @@ exports.handler = async function(event, context) {
     body: JSON.stringify({ message: 'Method not allowed' })
   };
 };
-
