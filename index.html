@@ -97,6 +97,10 @@
   <div id="app" class="main-container">
     <h1 class="text-center mb-4">Time Box Visualizer</h1>
     
+    <div v-if="loading" class="text-center">
+      <p>Loading data...</p>
+    </div>
+    
     <div class="time-box">
       <div v-for="(hour, index) in hours" :key="index" class="hour-box" :class="{ selected: selectedHours.includes(index) }" :style="{backgroundColor: hour.color}" :data-dark="isDarkColor(hour.color)" @click="toggleSelection(index)">
         <div class="time-label" :style="{ color: isDarkColor(hour.color) ? '#fff' : '#000' }">{{ formatTime(index) }}</div>
@@ -320,6 +324,7 @@
             if (snapshot.exists()) {
               const data = snapshot.val();
               console.log('Data loaded:', data);
+              // Load data into Vue instance
               this.hours = data.hours || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
               this.archive = data.archive || [];
               this.predefinedActivities = data.predefinedActivities || [
@@ -336,7 +341,7 @@
               ];
             } else {
               console.log('No data found in Firebase');
-              // Initialize default values if no data found
+              // Initialize with default values if no data found
               this.hours = Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
               this.archive = [];
               this.predefinedActivities = [
@@ -352,10 +357,11 @@
                 { name: 'Exercise', color: '#36BA98' }
               ];
             }
+            this.loading = false;  // Set loading to false when done
           })
           .catch((err) => {
             console.error('Error loading data:', err);
-            // Initialize default values in case of error
+            // Initialize with default values in case of error
             this.hours = Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
             this.archive = [];
             this.predefinedActivities = [
@@ -370,12 +376,18 @@
               { name: 'Walk', color: '#FFD35A' },
               { name: 'Exercise', color: '#36BA98' }
             ];
+            this.loading = false;  // Set loading to false even on error
           });
       }
     },
       created() {
         this.loadData(); // Load data when the app starts
-      }  
+      },
+      computed: {
+      isDataLoaded() {
+        return !this.loading;
+      }
+    }  
 
       
 
