@@ -188,111 +188,105 @@
     };
   </script>
 
-  <script>
-    new Vue({
-      el: '#app',
-      data: {
-        hours: JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
-        // hours: Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
-        archive: JSON.parse(localStorage.getItem('archive')) || [],
-        // archive: [],
-        selectedHours: [],
-        selectedActivity: null,
-        newActivityName: '',
-        newActivityColor: '#ffffff',
-        predefinedActivities: [
-          { name: 'Sleep', color: '#EBEAFF' },
-          { name: 'Office', color: '#C2FFC7' },
-          { name: 'Reading', color: '#FAB12F' },
-          { name: 'Math', color: '#FFE6A9' },
-          { name: 'Philosophy', color: '#D8DBBD' },
-          { name: 'Writing', color: '#FAF6E3' },
-          { name: 'Family time', color: '#FFE3E3' },
-          { name: 'Entertainment', color: '#10375C' },
-          { name: 'Walk', color: '#FFD35A' },
-          { name: 'Exercise', color: '#36BA98' }
-        ]
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      loading: true,  // Add a loading state
+      hours: Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })), // Initial default values
+      archive: [],
+      selectedHours: [],
+      selectedActivity: null,
+      newActivityName: '',
+      newActivityColor: '#ffffff',
+      predefinedActivities: [
+        { name: 'Sleep', color: '#EBEAFF' },
+        { name: 'Office', color: '#C2FFC7' },
+        { name: 'Reading', color: '#FAB12F' },
+        { name: 'Math', color: '#FFE6A9' },
+        { name: 'Philosophy', color: '#D8DBBD' },
+        { name: 'Writing', color: '#FAF6E3' },
+        { name: 'Family time', color: '#FFE3E3' },
+        { name: 'Entertainment', color: '#10375C' },
+        { name: 'Walk', color: '#FFD35A' },
+        { name: 'Exercise', color: '#36BA98' }
+      ]
+    },
+    methods: {
+      confirmArchiveDay() {
+        if (confirm('Are you sure you want to archive the day?')) {
+          this.archiveDay();
+        }
       },
-      methods: {
-        confirmArchiveDay() {
-          if (confirm('Are you sure you want to archive the day?')) {
-            this.archiveDay();
-          }
-        },
-        toggleSelection(index) {
-          if (this.selectedHours.includes(index)) {
-            this.selectedHours = this.selectedHours.filter(i => i !== index);
-          } else {
-            this.selectedHours.push(index);
-          }
-        },
-        applyActivity() {
-          if (this.selectedActivity && this.selectedActivity !== 'add-new') {
-            this.selectedHours.forEach(index => {
-              this.hours[index].activity = this.selectedActivity.name;
-              this.hours[index].color = this.selectedActivity.color;
+      toggleSelection(index) {
+        if (this.selectedHours.includes(index)) {
+          this.selectedHours = this.selectedHours.filter(i => i !== index);
+        } else {
+          this.selectedHours.push(index);
+        }
+      },
+      applyActivity() {
+        if (this.selectedActivity && this.selectedActivity !== 'add-new') {
+          this.selectedHours.forEach(index => {
+            Vue.set(this.hours, index, {
+              activity: this.selectedActivity.name,
+              color: this.selectedActivity.color
             });
-          }
-          this.selectedHours = [];
-          this.saveData();
-        },
-        addNewActivity() {
-          if (this.newActivityName && this.newActivityColor) {
-            const newActivity = {
-              name: this.newActivityName,
-              color: this.newActivityColor
-            };
-            this.predefinedActivities.push(newActivity);
-            this.newActivityName = '';
-            this.newActivityColor = '#ffffff';
-            this.selectedActivity = newActivity;
-            this.saveData();
-          }
-        },
-        archiveDay() {
-          const date = new Date().toLocaleDateString();
-          this.archive.push({
-            date,
-            hours: JSON.parse(JSON.stringify(this.hours))
           });
-          this.hours = Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
+        }
+        this.selectedHours = [];
+        this.saveData();
+      },
+      addNewActivity() {
+        if (this.newActivityName && this.newActivityColor) {
+          const newActivity = {
+            name: this.newActivityName,
+            color: this.newActivityColor
+          };
+          this.predefinedActivities.push(newActivity);
+          this.newActivityName = '';
+          this.newActivityColor = '#ffffff';
+          this.selectedActivity = newActivity;
           this.saveData();
-        },
-        isDarkColor(color) {
-          const hex = color.replace('#', '');
-          const r = parseInt(hex.substring(0, 2), 16);
-          const g = parseInt(hex.substring(2, 4), 16);
-          const b = parseInt(hex.substring(4, 6), 16);
-          const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-          return brightness < 128;
-        },
-        formatTime(index) {
-          const hour = index % 12 || 12;
-          const period = index < 12 ? 'AM' : 'PM';
-          return `${hour} ${period}`;
-        },
-        // saveData() {
-        //   localStorage.setItem('hours', JSON.stringify(this.hours));
-        //   localStorage.setItem('archive', JSON.stringify(this.archive));
-        //   localStorage.setItem('predefinedActivities', JSON.stringify(this.predefinedActivities));
-        // }
-        saveData() {
-          console.log('Saving data to Firebase...');
-          console.log('Current hours data:', this.hours);  // Debugging log
-          console.log('Current archive data:', this.archive);  // Debugging log
-          const dbRef = window.app.firebase.ref(window.app.firebase.database, 'timeBoxApp/userData');
-          window.app.firebase.set(dbRef, {
-            hours: this.hours,
-            archive: this.archive,
-            predefinedActivities: this.predefinedActivities
-          })
-          .then(() => {
-            console.log('Data saved successfully to Firebase!');
-          })
-          .catch((err) => {
-            console.error('Error saving data:', err);
-          });
-        },
+        }
+      },
+      archiveDay() {
+        const date = new Date().toLocaleDateString();
+        this.archive.push({
+          date,
+          hours: JSON.parse(JSON.stringify(this.hours))
+        });
+        this.hours = Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
+        this.saveData();
+      },
+      isDarkColor(color) {
+        const hex = color.replace('#', '');
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return brightness < 128;
+      },
+      formatTime(index) {
+        const hour = index % 12 || 12;
+        const period = index < 12 ? 'AM' : 'PM';
+        return `${hour} ${period}`;
+      },
+      saveData() {
+        console.log('Saving data to Firebase...');
+        const dbRef = window.app.firebase.ref(window.app.firebase.database, 'timeBoxApp/userData');
+        window.app.firebase.set(dbRef, {
+          hours: this.hours,
+          archive: this.archive,
+          predefinedActivities: this.predefinedActivities
+        })
+        .then(() => {
+          console.log('Data saved successfully to Firebase!');
+        })
+        .catch((err) => {
+          console.error('Error saving data:', err);
+        });
+      },
       loadData() {
         console.log('Loading data from Firebase...');
         const dbRef = window.app.firebase.ref(window.app.firebase.database);
@@ -301,76 +295,37 @@
             if (snapshot.exists()) {
               const data = snapshot.val();
               console.log('Data loaded:', data);
+              
               // Load data into Vue instance
-              this.hours = data.hours || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
-              this.archive = data.archive || [];
-              this.predefinedActivities = data.predefinedActivities || [
-                { name: 'Sleep', color: '#EBEAFF' },
-                { name: 'Office', color: '#C2FFC7' },
-                { name: 'Reading', color: '#FAB12F' },
-                { name: 'Math', color: '#FFE6A9' },
-                { name: 'Philosophy', color: '#D8DBBD' },
-                { name: 'Writing', color: '#FAF6E3' },
-                { name: 'Family time', color: '#FFE3E3' },
-                { name: 'Entertainment', color: '#10375C' },
-                { name: 'Walk', color: '#FFD35A' },
-                { name: 'Exercise', color: '#36BA98' }
-              ];
+              if (data.hours) {
+                this.hours = data.hours.map(hour => ({ activity: hour.activity, color: hour.color }));
+              }
+              if (data.archive) {
+                this.archive = data.archive;
+              }
+              if (data.predefinedActivities) {
+                this.predefinedActivities = data.predefinedActivities;
+              }
+
+              this.loading = false;  // Set loading to false when done
             } else {
               console.log('No data found in Firebase');
-              // Initialize with default values if no data found
-              this.hours = Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
-              this.archive = [];
-              this.predefinedActivities = [
-                { name: 'Sleep', color: '#EBEAFF' },
-                { name: 'Office', color: '#C2FFC7' },
-                { name: 'Reading', color: '#FAB12F' },
-                { name: 'Math', color: '#FFE6A9' },
-                { name: 'Philosophy', color: '#D8DBBD' },
-                { name: 'Writing', color: '#FAF6E3' },
-                { name: 'Family time', color: '#FFE3E3' },
-                { name: 'Entertainment', color: '#10375C' },
-                { name: 'Walk', color: '#FFD35A' },
-                { name: 'Exercise', color: '#36BA98' }
-              ];
+              this.loading = false;  // Set loading to false even if no data is found
             }
-            this.loading = false;  // Set loading to false when done
           })
           .catch((err) => {
             console.error('Error loading data:', err);
-            // Initialize with default values in case of error
-            this.hours = Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
-            this.archive = [];
-            this.predefinedActivities = [
-              { name: 'Sleep', color: '#EBEAFF' },
-              { name: 'Office', color: '#C2FFC7' },
-              { name: 'Reading', color: '#FAB12F' },
-              { name: 'Math', color: '#FFE6A9' },
-              { name: 'Philosophy', color: '#D8DBBD' },
-              { name: 'Writing', color: '#FAF6E3' },
-              { name: 'Family time', color: '#FFE3E3' },
-              { name: 'Entertainment', color: '#10375C' },
-              { name: 'Walk', color: '#FFD35A' },
-              { name: 'Exercise', color: '#36BA98' }
-            ];
             this.loading = false;  // Set loading to false even on error
           });
       }
     },
-      created() {
-        this.loadData(); // Load data when the app starts
-      },
-      computed: {
-      isDataLoaded() {
-        return !this.loading;
-      }
-    }  
+    created() {
+      this.loadData(); // Load data when the app starts
+    }
+  });
+</script>
 
-      
-
-      
-    });
-  </script>
+  
 </body>
 </html>
 
