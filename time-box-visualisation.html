@@ -1,0 +1,250 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Time Box Visualizer</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Styles for the SPA */
+    .main-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .time-box {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-gap: 15px;
+      margin-bottom: 20px;
+    }
+    .hour-box {
+      border: 1px solid #ccc;
+      width: 100px;
+      height: 100px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: background-color 0.3s, color 0.3s;
+      flex-direction: column;
+    }
+    .hour-box span {
+      color: #000;
+    }
+    .hour-box[data-dark="true"] span {
+      color: #fff;
+    }
+    .time-label {
+      font-size: 10px;
+      margin-bottom: 5px;
+    }
+    .selected {
+      border: 3px solid #007bff;
+    }
+    .archive-section {
+      margin-top: 30px;
+      width: 100%;
+      max-width: 800px;
+    }
+    .archive-box {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      margin: 3px;
+      border: 1px solid #ccc;
+      text-align: center;
+      font-size: 10px;
+    }
+    .legend-section {
+      margin-top: 20px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+    }
+    .activity-panel {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 800px;
+    }
+    .new-activity-panel {
+      margin-top: 10px;
+      width: 100%;
+      max-width: 800px;
+    }
+    .archive-button {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 800px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="main-container">
+    <h1 class="text-center mb-4">Time Box Visualizer</h1>
+    
+    <div class="time-box">
+      <div v-for="(hour, index) in hours" :key="index" class="hour-box" :class="{ selected: selectedHours.includes(index) }" :style="{backgroundColor: hour.color}" :data-dark="isDarkColor(hour.color)" @click="toggleSelection(index)">
+        <div class="time-label" :style="{ color: isDarkColor(hour.color) ? '#fff' : '#000' }">{{ formatTime(index) }}</div>
+        <span>{{ hour.activity }}</span>
+      </div>
+    </div>
+    
+    <div class="activity-panel mx-auto">
+      <div class="d-flex align-items-center justify-content-center">
+        <label class="mr-2">Activity:</label>
+        <select v-model="selectedActivity" class="form-control mr-2" style="flex: 1; max-width: 300px;">
+          <option v-for="activity in predefinedActivities" :key="activity.name" :value="activity">{{ activity.name }}</option>
+          <option value="add-new">Add New Activity...</option>
+        </select>
+        <button class="btn btn-success btn-sm ml-2" @click="applyActivity">Apply</button>
+      </div>
+    </div>
+
+    <div v-if="selectedActivity === 'add-new'" class="new-activity-panel mx-auto">
+      <div class="d-flex justify-content-center align-items-center">
+        <input type="text" v-model="newActivityName" placeholder="New Activity Name" class="form-control mb-2 mr-2" style="max-width: 200px;" />
+        <input type="color" v-model="newActivityColor" class="form-control mb-2 mr-2" style="max-width: 60px;" />
+        <button class="btn btn-sm btn-success" @click="addNewActivity">Add Activity</button>
+      </div>
+    </div>
+    
+    
+
+    <div class="archive-button mx-auto">
+        <hr style="border-top: 2px dotted #EEEEEE;"/>
+      <button class="btn btn-lg" style="background-color: #EEEEEE; border-color: #EEEEEE;" @click="confirmArchiveDay">Archive Day</button>
+    </div>
+
+    <div class="archive-section">
+      <h2>Archive</h2>
+      <div v-for="(day, dayIndex) in archive" :key="dayIndex" class="mb-3">
+        <h5>{{ day.date }}</h5>
+        <div>
+          <div class="archive-box" v-for="(hour, hourIndex) in day.hours" :key="hourIndex" :style="{backgroundColor: hour.color}">
+            {{ hourIndex + 1 }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend-section" v-if="predefinedActivities.length > 0">
+      <h4>Legend</h4>
+      <div v-for="activity in predefinedActivities" :key="activity.name" class="legend-item">
+        <div class="legend-color" :style="{ backgroundColor: activity.color }"></div>
+        <span>{{ activity.name }}</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        hours: JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
+        archive: JSON.parse(localStorage.getItem('archive')) || [],
+        selectedHours: [],
+        selectedActivity: null,
+        newActivityName: '',
+        newActivityColor: '#ffffff',
+        predefinedActivities: [
+          { name: 'Sleep', color: '#EBEAFF' },
+          { name: 'Office', color: '#C2FFC7' },
+          { name: 'Reading', color: '#FAB12F' },
+          { name: 'Math', color: '#FFE6A9' },
+          { name: 'Philosophy', color: '#D8DBBD' },
+          { name: 'Writing', color: '#FAF6E3' },
+          { name: 'Family time', color: '#FFE3E3' },
+          { name: 'Entertainment', color: '#10375C' },
+          { name: 'Walk', color: '#FFD35A' },
+          { name: 'Exercise', color: '#36BA98' }
+        ]
+      },
+      methods: {
+        confirmArchiveDay() {
+          if (confirm('Are you sure you want to archive the day?')) {
+            this.archiveDay();
+          }
+        },
+        toggleSelection(index) {
+          if (this.selectedHours.includes(index)) {
+            this.selectedHours = this.selectedHours.filter(i => i !== index);
+          } else {
+            this.selectedHours.push(index);
+          }
+        },
+        applyActivity() {
+          if (this.selectedActivity && this.selectedActivity !== 'add-new') {
+            this.selectedHours.forEach(index => {
+              this.hours[index].activity = this.selectedActivity.name;
+              this.hours[index].color = this.selectedActivity.color;
+            });
+          }
+          this.selectedHours = [];
+          this.saveData();
+        },
+        addNewActivity() {
+          if (this.newActivityName && this.newActivityColor) {
+            const newActivity = {
+              name: this.newActivityName,
+              color: this.newActivityColor
+            };
+            this.predefinedActivities.push(newActivity);
+            this.newActivityName = '';
+            this.newActivityColor = '#ffffff';
+            this.selectedActivity = newActivity;
+            this.saveData();
+          }
+        },
+        archiveDay() {
+          const date = new Date().toLocaleDateString();
+          this.archive.push({
+            date,
+            hours: JSON.parse(JSON.stringify(this.hours))
+          });
+          this.hours = Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
+          this.saveData();
+        },
+        isDarkColor(color) {
+          const hex = color.replace('#', '');
+          const r = parseInt(hex.substring(0, 2), 16);
+          const g = parseInt(hex.substring(2, 4), 16);
+          const b = parseInt(hex.substring(4, 6), 16);
+          const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+          return brightness < 128;
+        },
+        formatTime(index) {
+          const hour = index % 12 || 12;
+          const period = index < 12 ? 'AM' : 'PM';
+          return `${hour} ${period}`;
+        },
+        saveData() {
+          localStorage.setItem('hours', JSON.stringify(this.hours));
+          localStorage.setItem('archive', JSON.stringify(this.archive));
+          localStorage.setItem('predefinedActivities', JSON.stringify(this.predefinedActivities));
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+
+
