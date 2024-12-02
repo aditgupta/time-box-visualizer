@@ -155,12 +155,35 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBeQ1pYcJ0YMEzx9Rb-00Vz1_FW0D06s1I",
+      authDomain: "time-box-b7f79.firebaseapp.com",
+      projectId: "time-box-b7f79",
+      storageBucket: "time-box-b7f79.firebasestorage.app",
+      messagingSenderId: "97463684641",
+      appId: "1:97463684641:web:5d99a4257a53776cbf9d60"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+  </script>
+
   <script>
     new Vue({
       el: '#app',
       data: {
-        hours: JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
-        archive: JSON.parse(localStorage.getItem('archive')) || [],
+        // hours: JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
+        hours: Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
+        // archive: JSON.parse(localStorage.getItem('archive')) || [],
+        archive: [],
         selectedHours: [],
         selectedActivity: null,
         newActivityName: '',
@@ -236,12 +259,51 @@
           const period = index < 12 ? 'AM' : 'PM';
           return `${hour} ${period}`;
         },
+        // saveData() {
+        //   localStorage.setItem('hours', JSON.stringify(this.hours));
+        //   localStorage.setItem('archive', JSON.stringify(this.archive));
+        //   localStorage.setItem('predefinedActivities', JSON.stringify(this.predefinedActivities));
+        // }
         saveData() {
-          localStorage.setItem('hours', JSON.stringify(this.hours));
-          localStorage.setItem('archive', JSON.stringify(this.archive));
-          localStorage.setItem('predefinedActivities', JSON.stringify(this.predefinedActivities));
+          console.log('Saving data to Firebase...');
+          database.ref('timeBoxApp/userData').set({
+            hours: this.hours,
+            archive: this.archive,
+            predefinedActivities: this.predefinedActivities
+          })
+          .then(() => {
+            console.log('Data saved successfully to Firebase!');
+          })
+          .catch((err) => {
+            console.error('Error saving data:', err);
+          });
+        },
+        loadData() {
+          console.log('Loading data from Firebase...');
+          database.ref('timeBoxApp/userData').once('value')
+            .then(snapshot => {
+              const data = snapshot.val();
+              if (data) {
+                console.log('Data loaded:', data);
+                this.hours = data.hours || this.hours;
+                this.archive = data.archive || this.archive;
+                this.predefinedActivities = data.predefinedActivities || this.predefinedActivities;
+              } else {
+                console.log('No data found in Firebase');
+              }
+            })
+            .catch((err) => {
+              console.error('Error loading data:', err);
+            });
         }
-      }
+      },
+      created() {
+        this.loadData(); // Load data when the app starts
+      }  
+
+      
+
+      
     });
   </script>
 </body>
