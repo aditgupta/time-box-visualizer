@@ -96,6 +96,7 @@
 <body>
   <div id="app" class="main-container">
     <h1 class="text-center mb-4">Time Box Visualizer</h1>
+    <h5 class="text-center mb-4" style="margin-top: -1.0rem;">Adit Gupta</h5>
   
     <div class="time-box">
       <div v-for="(hour, index) in hours" :key="index" class="hour-box" :class="{ selected: selectedHours.includes(index) }" :style="{backgroundColor: hour.color}" :data-dark="isDarkColor(hour.color)" @click="toggleSelection(index)">
