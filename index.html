@@ -91,6 +91,69 @@
       max-width: 800px;
       text-align: center;
     }
+
+    /* Print Styles */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #app, .time-box, .time-box * {
+        visibility: visible;
+      }
+      #app {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+      }
+      .time-box {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-gap: 15px;
+        margin: 20px auto;
+        width: fit-content; /* Ensures the grid doesn't stretch too much */
+      }
+      .hour-box {
+        width: 100px;
+        height: 100px;
+        border: 1px solid #ccc;
+      }
+
+      /* Apply background colors based on activity type */
+      .hour-box[data-activity="Sleep"] {
+        background-color: #EBEAFF !important;
+      }
+      .hour-box[data-activity="Office"] {
+        background-color: #C2FFC7 !important;
+      }
+      .hour-box[data-activity="Reading"] {
+        background-color: #FAB12F !important;
+      }
+      .hour-box[data-activity="Math"] {
+        background-color: #FFE6A9 !important;
+      }
+      .hour-box[data-activity="Philosophy"] {
+        background-color: #D8DBBD !important;
+      }
+      .hour-box[data-activity="Writing"] {
+        background-color: #FAF6E3 !important;
+      }
+      .hour-box[data-activity="Family time"] {
+        background-color: #FFE3E3 !important;
+      }
+      .hour-box[data-activity="Entertainment"] {
+        background-color: #10375C !important;
+        color: #fff !important;
+      }
+      .hour-box[data-activity="Walk"] {
+        background-color: #FFD35A !important;
+      }
+      .hour-box[data-activity="Exercise"] {
+        background-color: #36BA98 !important;
+      }
+    }
+
   </style>
 </head>
 <body>
