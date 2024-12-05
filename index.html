@@ -123,11 +123,10 @@
       </div>
     </div>
     
-    <div class="export-import-section mx-auto mt-4">
-      <button class="btn btn-secondary" @click="exportLocalStorage">Export Data</button>
-      <input type="file" id="importFileInput" accept=".json" @change="importLocalStorage($event)" style="display:none;">
-      <label for="importFileInput" class="btn btn-secondary ml-2">Import Data</label>
-    </div>
+    
+
+
+   
 
     <div class="archive-button mx-auto">
         <hr style="border-top: 2px dotted #EEEEEE;"/>
@@ -153,6 +152,16 @@
         <span>{{ activity.name }}</span>
       </div>
     </div>
+
+    
+
+    <div class="export-import-section mx-auto mt-4">
+      <hr style="border-top: 2px dotted rgb(238, 238, 238);" />
+      <button class="btn btn-secondary btn-sm" @click="exportLocalStorage">Export Data</button>
+      <input type="file" id="importFileInput" accept=".json" @change="importLocalStorage($event)" style="display:none;">
+      <label for="importFileInput" class="btn btn-secondary btn-sm ml-2" style="vertical-align:top;">Import Data</label>
+    </div>
+
   </div>
 
 
@@ -298,7 +307,15 @@
             { name: 'Walk', color: '#FFD35A' },
             { name: 'Exercise', color: '#36BA98' }
           ];
-        }
+        },
+        // addComment() {
+        //   this.comments.push({ text: '' });
+        //   this.saveData();
+        // },
+        // saveComment(index) {
+        //   this.comments[index].text = this.comments[index].text.trim();
+        //   this.saveData();
+        // }
       },
       created() {
         this.loadData(); // Load data when the app starts
@@ -310,8 +327,5 @@
   
 </body>
 </html>
-
-with open('/mnt/data/time_box_visualizer.html', 'w') as file:
-    file.write(updated_code)
 
 
