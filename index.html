@@ -203,7 +203,7 @@
         <h5>{{ day.date }}</h5>
         <div>
           <div class="archive-box" v-for="(hour, hourIndex) in day.hours" :key="hourIndex" :style="{backgroundColor: hour.color}">
-            {{ hourIndex + 1 }}
+            {{ hourIndex }}
           </div>
         </div>
       </div>
