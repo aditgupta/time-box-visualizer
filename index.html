@@ -20,6 +20,10 @@
       grid-template-columns: repeat(6, 1fr);
       grid-gap: 15px;
       margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+   border-radius: 8px;
+   padding: 20px;
+   background: #fff;
     }
     .hour-box {
       border: 1px solid #ccc;
@@ -33,12 +37,21 @@
       position: relative;
       transition: background-color 0.3s, color 0.3s;
       flex-direction: column;
+      transition: all 0.2s ease;
+   border-radius: 6px;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
+
     .hour-box span {
       color: #000;
     }
+
     .hour-box[data-dark="true"] span {
       color: #fff;
+    }
+    .hour-box:hover {
+   transform: translateY(-2px);
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     .time-label {
       font-size: 10px;
@@ -154,10 +167,182 @@
       }
     }
 
+    @media (max-width: 768px) {
+  .time-box {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .hour-box {
+    width: auto;
+    height: 80px;
+  }
+}
+
+  /** Tips **/
+  .tips-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 300px;
+  height: 100vh;
+  background-color: #f8f9fa;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.tips-panel-hidden {
+  transform: translateX(290px);
+}
+
+.tips-header {
+  padding: 15px;
+  background-color: #fff;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.tips-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #495057;
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0 8px;
+  transition: color 0.2s ease;
+}
+
+.toggle-btn:hover {
+  color: #495057;
+}
+
+.tips-content {
+  padding: 20px;
+}
+
+.tip-section {
+  margin-bottom: 25px;
+}
+
+.tip-section h4 {
+  font-size: 1.1rem;
+  color: #495057;
+  margin-bottom: 12px;
+}
+
+.tip-section ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.tip-section li {
+  margin-bottom: 10px;
+  color: #6c757d;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  padding-left: 20px;
+  position: relative;
+}
+
+.tip-section li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #6c757d;
+}
+
+/* Adjust main container margin to accommodate panel */
+.main-container {
+  margin-right: 300px;
+  transition: margin-right 0.3s ease;
+}
+
+.main-container.panel-hidden {
+  margin-right: 0;
+}  
+
+
+
+
+
   </style>
 </head>
 <body>
   <div id="app" class="main-container">
+
+    <!-- Begin Tips panel -->
+    <div id="tips-panel" class="tips-panel" :class="{ 'tips-panel-hidden': !showTips }">
+      <div class="tips-header">
+        <h3>Time Management Tips</h3>
+        <button @click="toggleTips" class="toggle-btn">
+          {{ showTips ? '×' : '→' }}
+        </button>
+      </div>
+      
+      <div class="tips-content" v-if="showTips">
+        <div class="tip-section">
+          <h4>🎯 Daily Planning</h4>
+          <ul>
+            <li>Plan tomorrow's tasks before going to bed</li>
+            <li>Tackle most important tasks during your peak energy hours</li>
+            <li>Use the 2-minute rule: If it takes less than 2 minutes, do it now</li>
+          </ul>
+        </div>
+    
+        <div class="tip-section">
+          <h4>⏰ Time Blocking</h4>
+          <ul>
+            <li>Group similar tasks together</li>
+            <li>Include buffer time between blocks</li>
+            <li>Set realistic time estimates</li>
+            <li>Schedule breaks to maintain productivity</li>
+          </ul>
+        </div>
+    
+        <div class="tip-section">
+          <h4>🧠 Focus & Energy</h4>
+          <ul>
+            <li>Work in focused 25-minute intervals (Pomodoro Technique)</li>
+            <li>Take regular breaks to maintain mental clarity</li>
+            <li>Minimize context switching between tasks</li>
+          </ul>
+        </div>
+    
+        <div class="tip-section">
+          <h4>📱 Minimize Distractions</h4>
+          <ul>
+            <li>Turn off notifications during focus blocks</li>
+            <li>Keep your workspace clean and organized</li>
+            <li>Use website blockers during deep work sessions</li>
+          </ul>
+        </div>
+    
+        <div class="tip-section">
+          <h4>📊 Review & Adjust</h4>
+          <ul>
+            <li>Review your time blocks at the end of each day</li>
+            <li>Identify patterns in your productive hours</li>
+            <li>Adjust your schedule based on energy levels</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- End Tips panel -->
+
+
     <h1 class="text-center mb-4">Time Box Visualizer</h1>
     <h5 class="text-center mb-4" style="margin-top: -1.0rem;">Adit Gupta</h5>
   
@@ -264,6 +449,7 @@
         hours: JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
         archive: JSON.parse(localStorage.getItem('archive')) || [],
         selectedHours: [],
+        showTips: true,
         dailyComments: localStorage.getItem('dailyComments') || '',
         selectedActivity: null,
         newActivityName: '',
@@ -286,6 +472,10 @@
           if (confirm('Are you sure you want to archive the day?')) {
             this.archiveDay();
           }
+        },
+        toggleTips() {
+          this.showTips = !this.showTips;
+          document.querySelector('.main-container').classList.toggle('panel-hidden');
         },
         toggleSelection(index) {
           if (this.selectedHours.includes(index)) {
@@ -386,6 +576,7 @@
             this.clearAllData();
         }
       },
+      
         loadData() {
           this.hours = JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
           this.archive = JSON.parse(localStorage.getItem('archive')) || [];
