@@ -177,6 +177,14 @@
         </select>
         <button class="btn btn-success btn-sm ml-2" @click="applyActivity">Apply</button>
       </div>
+      <div class="mx-auto" style="width: calc(100px * 6 + 75px); max-width: none; margin-top: 30px;">
+        <textarea 
+          v-model="dailyComments" 
+          class="form-control"
+          placeholder="Add your notes for the day here..."
+          style="width: 100%; min-height: 100px; padding: 12px; font-size: 1rem; color: #666; border-radius: 4px;"
+        ></textarea>
+      </div>
     </div>
 
     <div v-if="selectedActivity === 'add-new'" class="new-activity-panel mx-auto">
@@ -188,7 +196,15 @@
     </div>
     
     
-
+    <!-- <div class="comments-section mx-auto" style="max-width: 800px; margin-top: 20px;">
+      <h6>Daily Notes</h6>
+      <textarea 
+    v-model="dailyComments" 
+    class="form-control"
+    placeholder="Add your notes for the day here..."
+    style="width: 100%; min-height: 100px; margin-bottom: 15px; border-radius: 4px; padding: 12px; font-size: 1.1rem; color: #666;"
+  ></textarea>
+    </div> -->
 
    
 
@@ -206,6 +222,10 @@
             {{ hourIndex }}
           </div>
         </div>
+        <div v-if="day.comments" class="mt-2 p-2 bg-light rounded">
+          <strong>Notes:</strong> {{ day.comments }}
+        </div>
+        
       </div>
     </div>
 
@@ -224,6 +244,7 @@
       <button class="btn btn-secondary btn-sm" @click="exportLocalStorage">Export Data</button>
       <input type="file" id="importFileInput" accept=".json" @change="importLocalStorage($event)" style="display:none;">
       <label for="importFileInput" class="btn btn-secondary btn-sm ml-2" style="vertical-align:top;">Import Data</label>
+      <button class="btn btn-danger btn-sm ml-2" @click="confirmClearData">Clear Data</button>
     </div>
 
   </div>
@@ -243,6 +264,7 @@
         hours: JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' })),
         archive: JSON.parse(localStorage.getItem('archive')) || [],
         selectedHours: [],
+        dailyComments: localStorage.getItem('dailyComments') || '',
         selectedActivity: null,
         newActivityName: '',
         newActivityColor: '#ffffff',
@@ -299,9 +321,11 @@
           const date = new Date().toLocaleDateString();
           this.archive.push({
             date,
-            hours: JSON.parse(JSON.stringify(this.hours))
+            hours: JSON.parse(JSON.stringify(this.hours)),
+            comments: this.dailyComments || ''
           });
           this.hours = Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
+          this.dailyComments = '';
           this.saveData();
         },
         isDarkColor(color) {
@@ -321,6 +345,7 @@
           localStorage.setItem('hours', JSON.stringify(this.hours));
           localStorage.setItem('archive', JSON.stringify(this.archive));
           localStorage.setItem('predefinedActivities', JSON.stringify(this.predefinedActivities));
+          localStorage.setItem('dailyComments', this.dailyComments);
         },
         exportLocalStorage() {
           const localStorageData = JSON.stringify(localStorage);
@@ -356,9 +381,15 @@
           };
           reader.readAsText(file);
         },
+        confirmClearData() {
+            if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
+            this.clearAllData();
+        }
+      },
         loadData() {
           this.hours = JSON.parse(localStorage.getItem('hours')) || Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
           this.archive = JSON.parse(localStorage.getItem('archive')) || [];
+          this.dailyComments = localStorage.getItem('dailyComments') || '';
           this.predefinedActivities = JSON.parse(localStorage.getItem('predefinedActivities')) || [
             { name: 'Sleep', color: '#EBEAFF' },
             { name: 'Office', color: '#C2FFC7' },
@@ -372,6 +403,31 @@
             { name: 'Exercise', color: '#36BA98' }
           ];
         },
+        clearAllData() {
+    // Clear localStorage
+    localStorage.clear();
+    
+    // Reset all data properties
+    this.hours = Array.from({ length: 24 }, () => ({ activity: '', color: '#ffffff' }));
+    this.archive = [];
+    this.selectedHours = [];
+    this.selectedActivity = null;
+    this.dailyComments = '';
+    this.predefinedActivities = [
+      { name: 'Sleep', color: '#EBEAFF' },
+      { name: 'Office', color: '#C2FFC7' },
+      { name: 'Reading', color: '#FAB12F' },
+      { name: 'Math', color: '#FFE6A9' },
+      { name: 'Philosophy', color: '#D8DBBD' },
+      { name: 'Writing', color: '#FAF6E3' },
+      { name: 'Family time', color: '#FFE3E3' },
+      { name: 'Entertainment', color: '#10375C' },
+      { name: 'Walk', color: '#FFD35A' },
+      { name: 'Exercise', color: '#36BA98' }
+    ];
+    
+    alert('All data has been cleared successfully.');
+  },
         // addComment() {
         //   this.comments.push({ text: '' });
         //   this.saveData();
