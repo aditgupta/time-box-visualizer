@@ -80,8 +80,23 @@
       border: 1px solid #ccc;
       text-align: center;
       font-size: 10px;
+      position: relative;
     }
-    .legend-section {
+    .archive-box:hover::after {
+      content: attr(data-activity);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+}
+    /* .legend-section {
       margin-top: 20px;
     }
     .legend-item {
@@ -94,7 +109,7 @@
       height: 20px;
       margin-right: 10px;
       border: 1px solid #ccc;
-    }
+    } */
     .activity-panel {
       margin-top: 20px;
       width: 100%;
@@ -287,7 +302,46 @@
   margin-right: 0;
 }  
 
+/* Legends section */
 
+.legend-section {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.legend-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: left;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-right: 8px;
+  min-width: 100px;
+  font-size: 15px;  /* Reduced font size */
+}
+
+.legend-color {
+  width: 15px;  /* Smaller color box */
+  height: 15px;  /* Smaller color box */
+  margin-right: 8px;
+  border: 1px solid #ccc;
+}
+
+.legend-section h4 {
+  font-size: 20px;  /* Smaller heading */
+  margin-bottom: 10px;
+}
 
 
 
@@ -416,7 +470,7 @@
       <div v-for="(day, dayIndex) in [...archive].reverse()" :key="dayIndex" class="mb-3">
         <h5>{{ day.date }}</h5>
         <div>
-          <div class="archive-box" v-for="(hour, hourIndex) in day.hours" :key="hourIndex" :style="{backgroundColor: hour.color}">
+          <div class="archive-box" v-for="(hour, hourIndex) in day.hours" :key="hourIndex" :style="{backgroundColor: hour.color}" :data-activity="hour.activity || 'No activity'">
             {{ hourIndex }}
           </div>
         </div>
@@ -427,11 +481,21 @@
       </div>
     </div>
 
-    <div class="legend-section" v-if="predefinedActivities.length > 0">
+    <!-- <div class="legend-section" v-if="predefinedActivities.length > 0">
       <h4>Legend</h4>
       <div v-for="activity in predefinedActivities" :key="activity.name" class="legend-item">
         <div class="legend-color" :style="{ backgroundColor: activity.color }"></div>
         <span>{{ activity.name }}</span>
+      </div>
+    </div> -->
+
+    <div class="legend-section" v-if="predefinedActivities.length > 0">
+      <h4 class="mb-3">Legend - Hover over the boxes to see the relevant activity</h4>
+      <div class="legend-container">
+        <div v-for="activity in predefinedActivities" :key="activity.name" class="legend-item">
+          <div class="legend-color" :style="{ backgroundColor: activity.color }"></div>
+          <span>{{ activity.name }}</span>
+        </div>
       </div>
     </div>
 
