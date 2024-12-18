@@ -207,7 +207,7 @@
 }
 
   /** Tips **/
-  .tips-panel {
+  /* .tips-panel {
   position: fixed;
   right: 0;
   top: 0;
@@ -222,6 +222,90 @@
 
 .tips-panel-hidden {
   transform: translateX(290px);
+} */
+
+/* .tips-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 300px;
+  background: white;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  z-index: 1000;
+} */
+
+.tips-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 300px;
+  background: #f1edeb;
+  border-left: 1px solid #e9ecef;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  box-shadow: -1px 0 10px rgba(0, 0, 0, 0.05);  /* subtle shadow */
+  z-index: 1000;
+}
+
+.tips-panel.visible {
+  transform: translateX(0);
+}
+
+.chevron-toggle {
+  position: absolute;
+  left: -32px;  /* slightly closer to panel */
+  top: 20px;
+  width: 32px;  /* slimmer width */
+  height: 32px;  /* smaller height */
+  background: #f1edeb;
+  border: 1px solid #e9ecef;
+  border-right: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: -1px 0 3px rgba(0,0,0,0.05);  /* more subtle shadow */
+  border-radius: 4px 0 0 4px;
+  transition: background-color 0.2s ease;
+}
+
+.chevron-toggle:hover {
+  background-color: #f8f9fa;
+}
+
+.chevron-icon {
+  color: #666;  /* darker, more visible color */
+  font-size: 20px;  /* smaller size */
+  font-weight: normal;
+  transform: translateX(0);
+  transition: transform 0.2s ease;
+}
+
+.chevron-toggle.visible .chevron-icon {
+  transform: translateX(-2px) rotate(180deg);
+}
+
+.todo-content {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.todo-footer {
+  border-top: 2px dotted #EEEEEE;
+  padding: 15px;
+  text-align: center;
+}
+
+.toggle-todo-btn {
+  background-color: #EEEEEE;
+  border-color: #EEEEEE;
+  padding: 6px 12px;
+  width: 100%;
+  max-width: 800px;
 }
 
 .tips-header {
@@ -235,6 +319,43 @@
   top: 0;
   z-index: 1;
 }
+
+.todo-header {
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e9ecef;
+  background-color: #e7e3e1;
+}
+
+.todo-title {
+  font-size: 20px;
+  font-weight: 400;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.todo-emoji {
+  font-size: 22px;  /* slightly larger than text */
+}
+
+.add-button {
+  background-color: #28a745;  /* light pastel green */
+  border: none;
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  color: #fff;
+}
+
+.add-button:hover {
+  background-color: #90EE90;  /* slightly darker on hover */
+}
+
 
 .tips-header h3 {
   margin: 0;
@@ -256,7 +377,7 @@
   color: #495057;
 }
 
-.tips-content {
+/* .tips-content {
   padding: 20px;
 }
 
@@ -290,7 +411,7 @@
   position: absolute;
   left: 0;
   color: #6c757d;
-}
+} */
 
 /* Adjust main container margin to accommodate panel */
 .main-container {
@@ -351,7 +472,7 @@
   <div id="app" class="main-container">
 
     <!-- Begin Tips panel -->
-    <div id="tips-panel" class="tips-panel" :class="{ 'tips-panel-hidden': !showTips }">
+    <!-- <div id="tips-panel" class="tips-panel" :class="{ 'tips-panel-hidden': !showTips }">
       <div class="tips-header">
         <h3>Time Management Tips</h3>
         <button @click="toggleTips" class="toggle-btn">
@@ -406,19 +527,86 @@
           </ul>
         </div>
       </div>
+    </div> -->
+
+    
+
+    <div class="tips-panel" :class="{ visible: isPanelVisible }">
+
+      <button class="chevron-toggle" 
+        :class="{ visible: isPanelVisible }" 
+        @click="toggleTodoPanel">
+  <span class="chevron-icon">‹</span>
+</button>
+
+      <!-- <div style="padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
+        <h5 class="mb-0" style="font-weight: 500;">
+          <span class="todo-emoji">✅</span>
+          To Do</h5>
+        <button class="btn" 
+                style="background-color: #f8f9fa; font-size: 14px; padding: 6px 12px;"
+                @click="addTodo">
+          Add
+        </button>
+      </div> -->
+
+      <div class="todo-header">
+        <h5 class="todo-title">
+          <span class="todo-emoji">✅</span>
+          To Do
+        </h5>
+        <button class="btn add-button" @click="addTodo">
+          Add
+        </button>
+      </div>
+    
+      <div style="padding: 15px 20px;">
+        <!-- Add todo input (shows only when adding) -->
+        <div v-if="isAddingTodo" class="mb-3">
+          <input type="text" 
+                 class="form-control" 
+                 v-model="newTodo" 
+                 @keyup.enter="saveTodo"
+                 placeholder="Enter todo..."
+                 ref="todoInput">
+        </div>
+    
+        <!-- Todo list -->
+        <div v-for="(todo, index) in todos" 
+             :key="index" 
+             class="d-flex align-items-center mb-3">
+          <input type="checkbox" 
+                 class="mr-3" 
+                 v-model="todo.completed" 
+                 @change="saveTodos">
+          <span :style="{ textDecoration: todo.completed ? 'line-through' : 'none', flexGrow: 1 }">
+            {{ todo.text }}
+          </span>
+          <span style="color: #999; cursor: pointer; padding: 0 5px;" 
+                @click="deleteTodo(index)">&times;</span>
+        </div>
+      </div>
     </div>
+  
     <!-- End Tips panel -->
 
 
     <h1 class="text-center mb-4">Time Box Visualizer</h1>
     <h5 class="text-center mb-4" style="margin-top: -1.0rem;">Adit Gupta</h5>
-  
+    
+
     <div class="time-box">
       <div v-for="(hour, index) in hours" :key="index" class="hour-box" :class="{ selected: selectedHours.includes(index) }" :style="{backgroundColor: hour.color}" :data-dark="isDarkColor(hour.color)" @click="toggleSelection(index)">
         <div class="time-label" :style="{ color: isDarkColor(hour.color) ? '#fff' : '#000' }">{{ formatTime(index) }}</div>
         <span>{{ hour.activity }}</span>
       </div>
     </div>
+      
+
+    
+    
+    
+    
     
     <div class="activity-panel mx-auto">
       <div class="d-flex align-items-center justify-content-center">
@@ -530,6 +718,10 @@
         dailyComments: localStorage.getItem('dailyComments') || '',
         selectedActivity: null,
         newActivityName: '',
+        isPanelVisible: true,
+        todos: JSON.parse(localStorage.getItem('todos')) || [],
+        newTodo: '',
+        isAddingTodo: false,
         newActivityColor: '#ffffff',
         predefinedActivities: [
           { name: 'Sleep', color: '#EBEAFF' },
@@ -617,6 +809,34 @@
           localStorage.setItem('archive', JSON.stringify(this.archive));
           localStorage.setItem('predefinedActivities', JSON.stringify(this.predefinedActivities));
           localStorage.setItem('dailyComments', this.dailyComments);
+        },
+        addTodo() {
+          this.isAddingTodo = true;
+          this.$nextTick(() => {
+          this.$refs.todoInput.focus();
+          });
+        },
+        saveTodo() {
+          const todoText = this.newTodo.trim();
+          if (todoText) {
+            this.todos.push({
+            text: todoText,
+            completed: false
+          });
+          this.newTodo = '';
+          this.saveTodos();
+          }
+          this.isAddingTodo = false;
+        },
+        deleteTodo(index) {
+          this.todos.splice(index, 1);
+          this.saveTodos();
+        },
+        saveTodos() {
+          localStorage.setItem('todos', JSON.stringify(this.todos));
+        },
+        toggleTodoPanel() {
+          this.isPanelVisible = !this.isPanelVisible;
         },
         exportLocalStorage() {
           const localStorageData = JSON.stringify(localStorage);
