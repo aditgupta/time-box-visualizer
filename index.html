@@ -415,12 +415,12 @@
 
 /* Adjust main container margin to accommodate panel */
 .main-container {
-  margin-right: 300px;
+  margin-right: 0px;
   transition: margin-right 0.3s ease;
 }
 
-.main-container.panel-hidden {
-  margin-right: 0;
+.main-container.panel-open {
+  margin-right: 300px;
 }  
 
 /* Legends section */
@@ -469,7 +469,7 @@
   </style>
 </head>
 <body>
-  <div id="app" class="main-container">
+  <div id="app" class="main-container" :class="{ 'panel-open': isPanelVisible }">
 
     <!-- Begin Tips panel -->
     <!-- <div id="tips-panel" class="tips-panel" :class="{ 'tips-panel-hidden': !showTips }">
@@ -746,8 +746,9 @@
             this.archiveDay();
           }
         },
-        toggleTips() {
-          this.showTips = !this.showTips;
+        toggleTodoPanel() {
+          // this.showTips = !this.showTips;
+          this.isPanelVisible = !this.isPanelVisible;
           document.querySelector('.main-container').classList.toggle('panel-hidden');
         },
         toggleSelection(index) {
