@@ -407,7 +407,7 @@
 
     <div class="archive-section">
       <h2>Archive</h2>
-      <div v-for="(day, dayIndex) in archive" :key="dayIndex" class="mb-3">
+      <div v-for="(day, dayIndex) in [...archive].reverse()" :key="dayIndex" class="mb-3">
         <h5>{{ day.date }}</h5>
         <div>
           <div class="archive-box" v-for="(hour, hourIndex) in day.hours" :key="hourIndex" :style="{backgroundColor: hour.color}">
@@ -473,6 +473,8 @@
           { name: 'Walk', color: '#FFD35A' },
           { name: 'Coding', color: '#E0F4FF'},
           { name: 'Meditate', color: '#FFE0CB'},
+          { name: 'Declutter', color: '#F6F5F2'},
+          { name: 'Finance', color: '#CBE2B5'},
           { name: 'Exercise', color: '#36BA98' }
         ]
       },
