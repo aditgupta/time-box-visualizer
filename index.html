@@ -5,10 +5,16 @@
 <head>
   <title>Time Box Visualizer</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+  
   <style>
     /* Styles for the SPA */
     body {
       background-color: #F6F5F2;
+
     }
 
     .main-container {
@@ -96,20 +102,6 @@
   white-space: nowrap;
   z-index: 1000;
 }
-    /* .legend-section {
-      margin-top: 20px;
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 5px;
-    }
-    .legend-color {
-      width: 20px;
-      height: 20px;
-      margin-right: 10px;
-      border: 1px solid #ccc;
-    } */
     .activity-panel {
       margin-top: 20px;
       width: 100%;
@@ -206,36 +198,6 @@
   }
 }
 
-  /** Tips **/
-  /* .tips-panel {
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 300px;
-  height: 100vh;
-  background-color: #f8f9fa;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-  z-index: 1000;
-  overflow-y: auto;
-}
-
-.tips-panel-hidden {
-  transform: translateX(290px);
-} */
-
-/* .tips-panel {
-  position: fixed;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 300px;
-  background: white;
-  box-shadow: -2px 0 5px rgba(0,0,0,0.1);
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
-  z-index: 1000;
-} */
 
 .tips-panel {
   position: fixed;
@@ -377,42 +339,6 @@
   color: #495057;
 }
 
-/* .tips-content {
-  padding: 20px;
-}
-
-.tip-section {
-  margin-bottom: 25px;
-}
-
-.tip-section h4 {
-  font-size: 1.1rem;
-  color: #495057;
-  margin-bottom: 12px;
-}
-
-.tip-section ul {
-  list-style-type: none;
-  padding-left: 0;
-  margin: 0;
-}
-
-.tip-section li {
-  margin-bottom: 10px;
-  color: #6c757d;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  padding-left: 20px;
-  position: relative;
-}
-
-.tip-section li:before {
-  content: "•";
-  position: absolute;
-  left: 0;
-  color: #6c757d;
-} */
-
 /* Adjust main container margin to accommodate panel */
 .main-container {
   margin-right: 0px;
@@ -471,84 +397,13 @@
 <body>
   <div id="app" class="main-container" :class="{ 'panel-open': isPanelVisible }">
 
-    <!-- Begin Tips panel -->
-    <!-- <div id="tips-panel" class="tips-panel" :class="{ 'tips-panel-hidden': !showTips }">
-      <div class="tips-header">
-        <h3>Time Management Tips</h3>
-        <button @click="toggleTips" class="toggle-btn">
-          {{ showTips ? '×' : '→' }}
-        </button>
-      </div>
-      
-      <div class="tips-content" v-if="showTips">
-        <div class="tip-section">
-          <h4>🎯 Daily Planning</h4>
-          <ul>
-            <li>Plan tomorrow's tasks before going to bed</li>
-            <li>Tackle most important tasks during your peak energy hours</li>
-            <li>Use the 2-minute rule: If it takes less than 2 minutes, do it now</li>
-          </ul>
-        </div>
-    
-        <div class="tip-section">
-          <h4>⏰ Time Blocking</h4>
-          <ul>
-            <li>Group similar tasks together</li>
-            <li>Include buffer time between blocks</li>
-            <li>Set realistic time estimates</li>
-            <li>Schedule breaks to maintain productivity</li>
-          </ul>
-        </div>
-    
-        <div class="tip-section">
-          <h4>🧠 Focus & Energy</h4>
-          <ul>
-            <li>Work in focused 25-minute intervals (Pomodoro Technique)</li>
-            <li>Take regular breaks to maintain mental clarity</li>
-            <li>Minimize context switching between tasks</li>
-          </ul>
-        </div>
-    
-        <div class="tip-section">
-          <h4>📱 Minimize Distractions</h4>
-          <ul>
-            <li>Turn off notifications during focus blocks</li>
-            <li>Keep your workspace clean and organized</li>
-            <li>Use website blockers during deep work sessions</li>
-          </ul>
-        </div>
-    
-        <div class="tip-section">
-          <h4>📊 Review & Adjust</h4>
-          <ul>
-            <li>Review your time blocks at the end of each day</li>
-            <li>Identify patterns in your productive hours</li>
-            <li>Adjust your schedule based on energy levels</li>
-          </ul>
-        </div>
-      </div>
-    </div> -->
-
-    
-
     <div class="tips-panel" :class="{ visible: isPanelVisible }">
 
       <button class="chevron-toggle" 
         :class="{ visible: isPanelVisible }" 
         @click="toggleTodoPanel">
-  <span class="chevron-icon">‹</span>
-</button>
-
-      <!-- <div style="padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;">
-        <h5 class="mb-0" style="font-weight: 500;">
-          <span class="todo-emoji">✅</span>
-          To Do</h5>
-        <button class="btn" 
-                style="background-color: #f8f9fa; font-size: 14px; padding: 6px 12px;"
-                @click="addTodo">
-          Add
-        </button>
-      </div> -->
+        <span class="chevron-icon">‹</span>
+      </button>
 
       <div class="todo-header">
         <h5 class="todo-title">
@@ -561,16 +416,19 @@
       </div>
     
       <div style="padding: 15px 20px;">
-        <!-- Add todo input (shows only when adding) -->
+        
         <div v-if="isAddingTodo" class="mb-3">
           <input type="text" 
                  class="form-control" 
                  v-model="newTodo" 
                  @keyup.enter="saveTodo"
                  placeholder="Enter todo..."
-                 ref="todoInput">
+                 ref="todoInput">       
+                  
         </div>
-    
+        
+        
+
         <!-- Todo list -->
         <div v-for="(todo, index) in todos" 
              :key="index" 
@@ -582,6 +440,7 @@
           <span :style="{ textDecoration: todo.completed ? 'line-through' : 'none', flexGrow: 1 }">
             {{ todo.text }}
           </span>
+
           <span style="color: #999; cursor: pointer; padding: 0 5px;" 
                 @click="deleteTodo(index)">&times;</span>
         </div>
@@ -591,7 +450,7 @@
     <!-- End Tips panel -->
 
 
-    <h1 class="text-center mb-4">Time Box Visualizer</h1>
+    <h1 class="text-center mb-4" style="font-family:'Lato', serif;">Time Box Visualizer</h1>
     <h5 class="text-center mb-4" style="margin-top: -1.0rem;">Adit Gupta</h5>
     
 
@@ -634,19 +493,7 @@
         <button class="btn btn-sm btn-success" @click="addNewActivity">Add Activity</button>
       </div>
     </div>
-    
-    
-    <!-- <div class="comments-section mx-auto" style="max-width: 800px; margin-top: 20px;">
-      <h6>Daily Notes</h6>
-      <textarea 
-    v-model="dailyComments" 
-    class="form-control"
-    placeholder="Add your notes for the day here..."
-    style="width: 100%; min-height: 100px; margin-bottom: 15px; border-radius: 4px; padding: 12px; font-size: 1.1rem; color: #666;"
-  ></textarea>
-    </div> -->
-
-   
+       
 
     <div class="archive-button mx-auto">
         <hr style="border-top: 2px dotted #EEEEEE;"/>
@@ -669,13 +516,6 @@
       </div>
     </div>
 
-    <!-- <div class="legend-section" v-if="predefinedActivities.length > 0">
-      <h4>Legend</h4>
-      <div v-for="activity in predefinedActivities" :key="activity.name" class="legend-item">
-        <div class="legend-color" :style="{ backgroundColor: activity.color }"></div>
-        <span>{{ activity.name }}</span>
-      </div>
-    </div> -->
 
     <div class="legend-section" v-if="predefinedActivities.length > 0">
       <h4 class="mb-3">Legend - Hover over the boxes to see the relevant activity</h4>
@@ -929,14 +769,6 @@
     
     alert('All data has been cleared successfully.');
   },
-        // addComment() {
-        //   this.comments.push({ text: '' });
-        //   this.saveData();
-        // },
-        // saveComment(index) {
-        //   this.comments[index].text = this.comments[index].text.trim();
-        //   this.saveData();
-        // }
       },
       created() {
         this.loadData(); // Load data when the app starts
