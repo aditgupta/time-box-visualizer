@@ -5,10 +5,11 @@
 <head>
   <title>Time Box Visualizer</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
   
   <style>
     /* Styles for the SPA */
@@ -112,12 +113,31 @@
       width: 100%;
       max-width: 800px;
     }
+
     .archive-button {
       margin-top: 20px;
       width: 100%;
       max-width: 800px;
       text-align: center;
     }
+
+    .archive-button:hover {
+      transform: translateY(-2px);
+    }
+    
+    .activity-select {
+  padding-right: 35px !important;  /* More space for caret */
+  appearance: none;  /* Remove default arrow */
+  background: white url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>") no-repeat right 12px center/12px;  /* Custom caret */
+  cursor: pointer;
+  }
+
+/* Adjust dimensions and spacing */
+.activity-select.form-control {
+  height: calc(1.5em + 1rem + 2px); /* Slightly taller */
+  font-size: 1rem;
+  line-height: 1.5;
+}
 
     /* Print Styles */
     @media print {
@@ -187,16 +207,16 @@
       }
     }
 
-    @media (max-width: 768px) {
+    /* @media (max-width: 768px) {
   .time-box {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(6, 1fr);
   }
   
   .hour-box {
     width: auto;
     height: 80px;
   }
-}
+} */
 
 
 .tips-panel {
@@ -450,7 +470,7 @@
     <!-- End Tips panel -->
 
 
-    <h1 class="text-center mb-4" style="font-family:'Lato', serif;">Time Box Visualizer</h1>
+    <h1 class="text-center mb-4" style="font-family:'Open Sans', serif;">Time Box Visualizer</h1>
     <h5 class="text-center mb-4" style="margin-top: -1.0rem;">Adit Gupta</h5>
     
 
@@ -470,7 +490,7 @@
     <div class="activity-panel mx-auto">
       <div class="d-flex align-items-center justify-content-center">
         <label class="mr-2">Activity:</label>
-        <select v-model="selectedActivity" class="form-control mr-2" style="flex: 1; max-width: 300px;">
+        <select v-model="selectedActivity" class="form-control activity-select mr-2" style="flex: 1; max-width: 300px;">
           <option v-for="activity in predefinedActivities" :key="activity.name" :value="activity">{{ activity.name }}</option>
           <option value="add-new">Add New Activity...</option>
         </select>
@@ -497,7 +517,7 @@
 
     <div class="archive-button mx-auto">
         <hr style="border-top: 2px dotted #EEEEEE;"/>
-      <button class="btn btn-lg" style="background-color: #EEEEEE; border-color: #EEEEEE;" @click="confirmArchiveDay">Archive Day</button>
+      <button class="btn btn-lg" style="background-color: #fff; border-color: #EEEEEE;" @click="confirmArchiveDay"><i class="fas fa-archive mr-2"></i>Archive Day</button>
     </div>
 
     <div class="archive-section">
