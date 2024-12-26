@@ -735,6 +735,61 @@
           };
           reader.readAsText(file);
         },
+        setupAutoArchive() {
+        // Schedule next archive
+        this.scheduleNextArchive();
+
+        // Check if we missed archiving yesterday
+        this.autoArchiveIfNeeded();
+        },
+        scheduleNextArchive() {
+          const now = new Date();
+          const nextArchive = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate(), // today
+            23, // 23 hours
+            59, // 59 minutes
+            0  // 0 seconds
+        );
+        
+         // If it's already past 23:59 today, schedule for tomorrow
+         if (now >= nextArchive) {
+            nextArchive.setDate(nextArchive.getDate() + 1);
+        }
+
+        // Calculate milliseconds until next archive
+        const msUntilArchive = nextArchive.getTime() - now.getTime();
+
+        // console.log(`Test: Next archive in ${msUntilArchive/1000} seconds`);
+        // console.log(`Test: Archive will happen at ${nextArchive.toLocaleTimeString()}`);
+
+        // Schedule the archive
+        setTimeout(() => {
+            this.autoArchiveIfNeeded();
+            // Schedule next day's archive
+            this.scheduleNextArchive();
+        }, msUntilArchive);
+
+        console.log(`Next auto-archive scheduled for: ${nextArchive.toLocaleString()}`);
+        },
+
+        autoArchiveIfNeeded() {
+        const now = new Date();
+        const today = now.toLocaleDateString();
+        
+        // Check if today is already archived
+        const isArchivedToday = this.archive.some(day => 
+            new Date(day.date).toLocaleDateString() === today
+        );
+
+        // If not archived and there's data to archive
+        if (!isArchivedToday && this.hours.some(hour => hour.activity)) {
+            console.log('Auto-archiving day at:', now.toLocaleString());
+            this.archiveDay();
+        }
+        },
+
         confirmClearData() {
             if (confirm('Are you sure you want to clear all data? This action cannot be undone.')) {
             this.clearAllData();
@@ -794,6 +849,7 @@
       },
       created() {
         this.loadData(); // Load data when the app starts
+        this.setupAutoArchive();
       
       }
     });
