@@ -765,7 +765,13 @@
         // console.log(`Test: Archive will happen at ${nextArchive.toLocaleTimeString()}`);
 
         // Schedule the archive
-        setTimeout(() => {
+        // setTimeout(() => {
+        //     this.autoArchiveIfNeeded();
+        //     // Schedule next day's archive
+        //     this.scheduleNextArchive();
+        // }, msUntilArchive);
+
+        this._archiveTimeout = setTimeout(() => {
             this.autoArchiveIfNeeded();
             // Schedule next day's archive
             this.scheduleNextArchive();
@@ -779,15 +785,23 @@
         const today = now.toLocaleDateString();
         
         // Check if today is already archived
-        const isArchivedToday = this.archive.some(day => 
+        const todayArchive = this.archive.find(day => 
             new Date(day.date).toLocaleDateString() === today
         );
 
         // If not archived and there's data to archive
-        if (!isArchivedToday && this.hours.some(hour => hour.activity)) {
+        // if (!isArchivedToday && this.hours.some(hour => hour.activity)) {
+        //     console.log('Auto-archiving day at:', now.toLocaleString());
+        //     this.archiveDay();
+        // }
+
+        if (!todayArchive && 
+            this.hours.some(hour => hour.activity) && 
+            (now.getHours() === 23 && now.getMinutes() === 59)) {
             console.log('Auto-archiving day at:', now.toLocaleString());
             this.archiveDay();
         }
+
         },
 
         confirmClearData() {
@@ -817,6 +831,12 @@
             { name: 'Exercise', color: '#36BA98' }
           ];
         },
+
+        beforeDestroy() {
+        if (this._archiveTimeout) {
+            clearTimeout(this._archiveTimeout);
+        }
+    },
         clearAllData() {
     // Clear localStorage
     localStorage.clear();
