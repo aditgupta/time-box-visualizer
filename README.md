@@ -1,59 +1,89 @@
 # Time Box Visualizer
 
-### Overview
+Time Box Visualizer is a personal productivity app designed to track and analyze daily activities in a time-box model. The app provides visual insights into how you spend your time and helps maintain daily to-dos. This app is primarily intended for personal use and learning purposes.
 
-Time Box Visualizer is a personal app designed to visualize daily activities in a time-box model. This app is primarily intended for personal use and learning purposes. The code has not been optimized for any production-grade deployment and lacks any form of robust error handling or security features. The app uses only local storage for data persistence, meaning data will be saved only on the specific device and browser used. No server or cloud database is involved.
+## Overview
 
-### Functionality
+The app uses local storage for data persistence, meaning data will be saved on the specific device and browser used. No server or cloud database is involved. The code has not been optimized for production-grade deployment and lacks robust error handling or security features.
 
-- Daily Time Tracking: The main feature of the app is to provide a visual representation of your day, divided into 24 boxes (each representing one hour of the day).
+## Core Features
 
-- Activity Labeling: You can select any box (or multiple boxes) and label it with a predefined activity. Each activity has a corresponding color, making it easy to visualize how time is spent throughout the day.
+### Time Tracking
+* Visual representation of your day divided into 24 boxes (each representing one hour)
+* Select and label multiple time blocks simultaneously
+* Color-coded activities for easy visualization
+* Predefined activities with customizable colors
 
-- Activity List and Customization: The app includes a default list of activities like Sleep, Office, Reading, Exercise, etc., along with an option to add custom activities.
+### Todo Management
+* Integrated todo list panel
+* Add, complete, and delete todos
+* Todo data persists with time tracking data
 
-- Archiving: At the end of each day, you can archive the current day's time-box. Archived days are stored locally and can be accessed and reviewed later.
+### Auto-Archiving
+* Automatic archiving of daily activities at 11:59 PM
+* Prevents data loss from forgotten manual archives
+* Maintains activity and todo history
 
-- Printing: The app has a feature to print the time-box for a day, designed to provide a clean output that includes only the activity grid.
+### Analytics
+* Separate analytics page (`analyze.html`) for data visualization
+* Monthly and all-time activity analysis
+* Detailed statistics excluding routine activities (Sleep & Office)
+* Visual charts showing activity distribution and hours per activity
 
-- Export & Import Local Storage: The app allows exporting and importing local storage data to save or transfer data across devices.
+### Data Management
+* Export and import functionality for data backup
+* Monthly data aggregation in analytics
+* Print feature for time-box visualization
+* Local storage for offline usage
 
-### Limitations
+## Usage
 
-- Local Storage Only: This app does not use any external database. All data is stored in your browser's local storage, which means the data is specific to that browser and device.
+### Time Tracking
+1. Select hour blocks by clicking
+2. Choose an activity from the dropdown or add new ones
+3. Activities are automatically saved and color-coded
+4. Day is automatically archived at midnight
 
-- No User Authentication: There is no login system or user identification, so anyone with access to the device can view and modify the data.
+### Todo Management
+1. Use the side panel to manage todos
+2. Click chevron to show/hide todo panel
+3. Mark todos as complete with checkbox
+4. Delete todos using the X button
 
-- Not Optimized for Production: The app lacks production-level optimizations and may not perform efficiently with a large amount of data or multiple users.
+### Analytics
+1. Open `analyze.html` for detailed analysis
+2. Upload exported data for new months
+3. Use dropdown to select specific months or view all-time data
+4. View activity distribution and usage patterns
 
-### Usage
+### Data Backup
+* Use Export button to backup your data
+* Import previously exported data
+* Data persists across browser refreshes
 
-- Select an Hour: Click on a box representing a specific hour of the day.
+## Technologies Used
+* Vue.js for reactive UI components
+* Chart.js for analytics visualizations
+* Bootstrap 5 for styling
+* JavaScript (ES6+)
 
-- Assign an Activity: Use the activity dropdown to select or add an activity to label the selected hour(s).
+## Installation
+1. Clone or download the repository
+2. Open `index.html` for the main app
+3. Use `analyze.html` for data analysis
 
-- Archive the Day: At the end of the day, click the "Archive Day" button to save the day's activities.
+## Files
+* `index.html`: Main time tracking and todo application
+* `analyze.html`: Analytics and data visualization dashboard
 
-- Print the Time Box: Click the "Print Time Box" button to print a copy of the day's time-box for offline use.
+## Limitations
+* Uses browser local storage only
+* No user authentication
+* Not optimized for production use
+* Data is browser/device specific
 
-- Export/Import Data: Backup your local storage or import previously saved data using the export/import options.
+## Disclaimer
+This app is for personal use and learning purposes only. It has not been tested for critical or production environments. Use at your own risk, and be mindful that data may be lost if local storage is cleared.
 
-### Technologies Used
-
-- Vue.js: The app is built using Vue.js, providing a reactive and dynamic user experience.
-
-- Bootstrap: Bootstrap 4.5 is used for the basic styling and layout.
-
-- JavaScript (ES6): The core functionality is implemented using vanilla JavaScript.
-
-### Installation
-
-This app is a simple HTML/JavaScript application that can be run locally. Just clone or download the repository and open the index.html file in your browser.
-
-### Disclaimer
-
-This app is for personal use and learning purposes only. It has not been tested for use in any critical or production environment. Use it at your own risk, and be mindful that data may be lost if local storage is cleared or if accessed from another device or browser.
-
-### License
-
+## License
 This project is open-source and available under the MIT License.
