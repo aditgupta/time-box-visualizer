@@ -458,8 +458,8 @@
                  class="mr-3" 
                  v-model="todo.completed" 
                  @change="saveTodos">
-          <span :style="{ textDecoration: todo.completed ? 'line-through' : 'none', flexGrow: 1 }">
-            {{ todo.text }}
+                 <span :style="{ textDecoration: todo.completed ? 'line-through' : 'none', flexGrow: 1 }" 
+                 v-html="convertUrlsToLinks(todo.text)">
           </span>
 
           <span style="color: #999; cursor: pointer; padding: 0 5px;" 
@@ -700,6 +700,11 @@
         },
         saveTodos() {
           localStorage.setItem('todos', JSON.stringify(this.todos));
+        },
+        convertUrlsToLinks(text) {
+    // URL regex pattern
+          const urlPattern = /(https?:\/\/[^\s]+)/g;
+          return text.replace(urlPattern, url => `<a href="${url}" target="_blank">${url}</a>`);
         },
         toggleTodoPanel() {
           this.isPanelVisible = !this.isPanelVisible;
