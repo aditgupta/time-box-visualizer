@@ -168,20 +168,22 @@
         border: 1px solid #ccc;
       }
 
+
+
       /* Apply background colors based on activity type */
       .hour-box[data-activity="Sleep"] {
         background-color: #EBEAFF !important;
       }
-      .hour-box[data-activity="Office"] {
+      .hour-box[data-activity="Coding"] {
         background-color: #C2FFC7 !important;
       }
       .hour-box[data-activity="Reading"] {
         background-color: #FFE0B2 !important;
       }
-      .hour-box[data-activity="Math"] {
+      .hour-box[data-activity="Marketing"] {
         background-color: #FFE6A9 !important;
       }
-      .hour-box[data-activity="Philosophy"] {
+      .hour-box[data-activity="Librarian"] {
         background-color: #D8DBBD !important;
       }
       .hour-box[data-activity="Writing"] {
@@ -822,22 +824,21 @@
           this.archive = JSON.parse(localStorage.getItem('archive')) || [];
           this.dailyComments = localStorage.getItem('dailyComments') || '';
           this.predefinedActivities = JSON.parse(localStorage.getItem('predefinedActivities')) || [
-            { name: 'Sleep', color: '#EBEAFF' },
-            { name: 'Office', color: '#C2FFC7' },
-            { name: 'Reading', color: '#FFE0B2' },
-            { name: 'Math', color: '#FFE6A9' },
-            { name: 'Philosophy', color: '#D8DBBD' },
-            { name: 'Writing', color: '#FAF6E3' },
-            { name: 'Family', color: '#FFE3E3' },
-            { name: 'Entertain', color: '#B8D5F1' },
-            { name: 'Walk', color: '#FFD35A' },
-            { name: 'Project', color: '#E0F4FF'},
-            { name: 'Learning', color: '#FFE0CB'},
-            { name: 'Declutter', color: '#F6F5F2'},
-            { name: 'Finance', color: '#CBE2B5'},
-            { name: 'Talk', color: '#D0E7DE'},
-            { name: 'Routine', color: '#FFD09B'},
-            { name: 'Exercise', color: '#36BA98' }
+          { name: 'Sleep', color: '#EBEAFF' },
+          { name: 'Coding', color: '#C2FFC7' },
+          { name: 'Reading', color: '#FFE0B2' },
+          { name: 'Marketing', color: '#FFE6A9' },
+          { name: 'Librarian', color: '#D8DBBD' },
+          { name: 'Writing', color: '#FAF6E3' },
+          { name: 'Family', color: '#FFE3E3' },
+          { name: 'Entertain', color: '#B8D5F1' },
+          { name: 'Walk', color: '#FFD35A' },
+          { name: 'Learning', color: '#FFE0CB'},
+          { name: 'Declutter', color: '#F6F5F2'},
+          { name: 'Finance', color: '#CBE2B5'},
+          { name: 'Talk', color: '#D0E7DE'},
+          { name: 'Routine', color: '#FFD09B'},
+          { name: 'Exercise', color: '#36BA98' }
           ];
         },
 
@@ -857,22 +858,21 @@
     this.selectedActivity = null;
     this.dailyComments = '';
     this.predefinedActivities = [
-      { name: 'Sleep', color: '#EBEAFF' },
-      { name: 'Office', color: '#C2FFC7' },
-      { name: 'Reading', color: '#FFE0B2' },
-      { name: 'Math', color: '#FFE6A9' },
-      { name: 'Philosophy', color: '#D8DBBD' },
-      { name: 'Writing', color: '#FAF6E3' },
-      { name: 'Family', color: '#FFE3E3' },
-      { name: 'Entertain', color: '#B8D5F1' },
-      { name: 'Walk', color: '#FFD35A' },
-      { name: 'Project', color: '#E0F4FF'},
-      { name: 'Learning', color: '#FFE0CB'},
-      { name: 'Declutter', color: '#F6F5F2'},
-      { name: 'Finance', color: '#CBE2B5'},
-      { name: 'Talk', color: '#D0E7DE'},
-      { name: 'Routine', color: '#FFD09B'},
-      { name: 'Exercise', color: '#36BA98' }
+    { name: 'Sleep', color: '#EBEAFF' },
+          { name: 'Coding', color: '#C2FFC7' },
+          { name: 'Reading', color: '#FFE0B2' },
+          { name: 'Marketing', color: '#FFE6A9' },
+          { name: 'Librarian', color: '#D8DBBD' },
+          { name: 'Writing', color: '#FAF6E3' },
+          { name: 'Family', color: '#FFE3E3' },
+          { name: 'Entertain', color: '#B8D5F1' },
+          { name: 'Walk', color: '#FFD35A' },
+          { name: 'Learning', color: '#FFE0CB'},
+          { name: 'Declutter', color: '#F6F5F2'},
+          { name: 'Finance', color: '#CBE2B5'},
+          { name: 'Talk', color: '#D0E7DE'},
+          { name: 'Routine', color: '#FFD09B'},
+          { name: 'Exercise', color: '#36BA98' }
     ];
     
     alert('All data has been cleared successfully.');
